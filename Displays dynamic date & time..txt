@@ -1,199 +1,314 @@
-Displays dynamic date & time.
-views.py
-from django.shortcuts import render
-import datetime
-from django.http import HttpResponse
-# Create your views here.
-def scdt_dyn(request,t):
-dt=datetime.datetime.now()+datetime.timedelta(hours=t)
-resp="<h1>Current Date and Time Ahead by %d hrs is %s</h1>"%(t,dt)
-return HttpResponse(resp)
-urls.py
-from django.contrib import admin
-from django.urls import path
-from scdt_dynApp.views import scdt_dyn
-urlpatterns = [
-path('admin/', admin.site.urls),
-path('dyntime/<int:t>',scdt_dyn),
-]
-
-
-
-
-
-Displays dynamic date & time. (All Conditions)
-views.py
-import datetime
-from django.http import HttpResponse
-from django.shortcuts import render
-# Create your views here.
-def scdt(request,s):
-t=int(s)
-dt=datetime.datetime.now()+datetime.timedelta(hours=t)
-if t<0:
-resp="<h1>Current Date and Time Behind %d hrs is %s</h1>"%(t,dt)
-elif t>0:
-resp="<h1>Current Date and Time ahead by %d hrs is %s</h1>"%(t,dt)
-else:
-resp="<h1>There is no change in current date and time</h1>"
-return HttpResponse(resp)
-urls.py
-from django.contrib import admin
-from django.urls import path
-from scdt_dynamicApp.views import scdt
-urlpatterns = [
-path('admin/', admin.site.urls),
-path('dynamicTime/<str:s>/',scdt),
-]
-
-
-
-
-
-2.1 Develop a simple Django app that displays an unordered list of fruits and ordered list of selected students for an event.
-fruits_student.html
+2.3. Develop a Django app that performs student registration to a course. It should also 
+display list of students registered for any selected course. Create students and course as 
+models with enrolment as ManyToMany field.
+basicTemplate.html
 <!DOCTYPE html>
 <html>
 <head>
 <style>
-#a1{background-color: lightblue;color:brown}
-#a2{background-color:blue;color:yellow}
-</style>
-<title>
-Unordered Fruits and Ordered Students
-</title>
-</head>
-<body>
-<h1 id="a1">Unordered List of Fruits</h1>
-<ul>
-{% for fruit in fruitList %}
-<li>{{fruit}}</li>
-{% endfor %}
-</ul>
-<h1 id="a2">Ordered List of Students Selected for an Event</h1>
-<ol>
-{% for student in studentList %}
-<li>{{student}}</li>
-{% endfor %}
-</ol>
-</body>
-</html>
-
-
-
-views.py
-from django.shortcuts import render
-# Create your views here.
-def fruit_student(request):
-fruitList=['Mango','Kiwi','Banana','Apple','Grapes']
-studentList=['Rama','Chetan','Kumar','Harish','Geetha']
-return render(request,'fruit_student.html',{'fruitList':fruitList,'studentList':sorted(studentList)})
-urls.py
-from django.contrib import admin
-from django.urls import path
-from FruitsApp.views import fruit_student
-urlpatterns = [
-path('admin/', admin.site.urls),
-path('fruits/',fruit_student),
-]
-
-
-
-
-settings ..py
-
-INSTALLED_APPS = [
-'django.contrib.admin',
-'django.contrib.auth',
-'django.contrib.contenttypes',
-'django.contrib.sessions',
-'django.contrib.messages',
-'django.contrib.staticfiles',
-'fruitsapp',
-]
-
-
-
-
-layout.html
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-nav{background-color: lightblue;padding: 15px;}
-</style>
+ nav{background-color: lightblue;padding: 15px; }
+ nav a {
+ color: #fff; /* Text color */
+ text-decoration: none; /* Remove underline */
+ padding: 10px 20px; /* Padding around each link */
+ margin: 0px 10px; /* Spacing between links */
+ border-radius: 5px; /* Rounded corners */
+ background-color: #555;
+ flex-wrap: wrap;
+ 
+}
+nav a:hover {
+ background-color:aqua;/* Background color on hover */
+}
+ul {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ display: flex; /* Use flexbox */
+ flex-wrap: wrap; /* Allow items to wrap to the next line */
+ flex-direction: row; /* Display items in a column */
+ }
+ li {
+ margin-right: 20px;
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 39
+ margin-bottom: 25px;
+ }
+ </style>
 <title>
 {% block title %} {% endblock %}
 </title>
 </head>
 <body>
+<center> <h1 style="background-color: blue;color:yellow"> STUDENT COURSE 
+REGISTRATION PORTAL</h1></center>
 <nav>
-<a href="/home/">HOME</a>
-<a href="/contactus/">CONTACT US</a>
-<a href="/aboutus/">ABOUT US</a>
+<ul>
+<li> <a href="/home/">HOME</a></li>
+<li> <a href="/studentlist/">STUDENT LIST</a></li>
+<li> <a href="/courselist/">COURSE LIST</a> </li>
+<li> <a href="/register/">REGISTER</a></li>
+<li> <a href="/enrolledlist/">ENROLLED LIST</a></li>
+<li> <a href="/addproject/">ADD PROJECT</a></li>
+<li><a href="/genericlistviewstudent/">GENERIC STUDENT LIST VIEW</a></li>
+<li> <a href="/download_course_table_as_csv/">DOWNLOAD COURSE AS 
+CSV</a> </li>
+<li> <a href="/download_course_table_as_pdf/">DWONLOAD COURSE AS 
+PDF</a></li>
+</ul>
 </nav>
 <section>
 {% block content %} {% endblock %}
 </section>
 <footer>
-<hr>
-&copy; Designed and Developed by Dr. Harish Kumar B T, CSE, BIT, Bangalore-04
+<hr/>
+<center> 
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 40
+&copy; Designed and Developeb by Dr. Harish Kumar B T, Dept. of CSE, BIT, 
+Bangalore-04
+</center>
 </footer>
 </body>
 </html>
-
-
-
 home.html
-{% extends 'layout.html' %}
-{% block title %} HOME Page {% endblock %}
+{% extends 'basicTemplate.html' %}
+{% block title %} Home Page {% endblock %}
 {% block content %}
-<h1>This is my home page</h1>
+<li>Click on Student List to get the List of students</li>
+<li> Click on Course List to get the list of courses</li>
+<li>click on register to enroll student to a course</li>
 {% endblock %}
-about.html
-{% extends 'layout.html' %}
-{% block title %} ABOUT PAGE {% endblock %}
+studentlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Student List {% endblock %}
+{% block content%}
+<h1>Student List</h1>
+<table border="1">
+<tr>
+<th>
+USN
+</th>
+<th>
+NAME
+</th>
+<th>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 41
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+courselist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course List {% endblock %}
+{% block content%}
+<h1> Course List</h1>
+<table border="1">
+<tr>
+<th>
+Sub Code
+</th>
+<th>
+Sub Name
+</th>
+<th>
+Credits
+</th>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 42
+</tr>
+{% for c in course_list %}
+<tr>
+<td>{{c.courseCode}}</td>
+<td>{{c.courseName}}</td>
+<td>{{c.courseCredits}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+enrolledlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Registration Details {% endblock %}
 {% block content %}
-<h1>About Us</h1>
-<p>Dr. Harish Kumar B T, Asso. Prof, Dept of CSE, BIT</p>
+<form method="POST" action="">
+{% csrf_token %}
+Select Course: 
+<select name="course">
+{% for c in Course_List %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="Search"/>
+{% if student_list %}
+<h1> List of Students registered of the course {{course.courseCode}}</h1>
+<table border="1">
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 43
+<tr>
+<th>
+USN
+</th>
+<th>
+NAME
+</th>
+<th>
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+</form>
 {% endblock %}
-contactus.html
-{% extends 'layout.html' %}
-{% block title %} Contact us {% endblock %}
+register.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Register Page {% endblock %}
 {% block content %}
-<h1>Contact us</h1>
-<p>Name: Dr. Harish Kumar B T</p>
-<p>Designation:Asso. Prof </p>
-<p>Mobile: 9980119894</p>
-<p>Email: harish.bitcse82@gmail.com</p>
+<h1> Student Course Registration</h1>
+<form method="POST" action="">
+{% csrf_token %}
+Select USN:
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 44
+<select name="student">
+{% for s in student_list %}
+<option value="{{s.id}}">{{s.usn}}</option>
+{% endfor %}
+</select>
+Select Course:
+<select name="course">
+{% for c in course_list %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="ENROLL"/>
+</form>
 {% endblock %}
-
-
-
+models.py
+from django.db import models
+from django.forms import ModelForm
+# Create your models here.
+class course(models.Model):
+courseCode=models.CharField(max_length=10)
+courseName=models.CharField(max_length=50)
+courseCredits=models.IntegerField()
+def __str__(self):
+return self.courseCode+" "+self.courseName+" "+str(self.courseCredits)
+class student(models.Model):
+usn=models.CharField(max_length=10)
+name=models.CharField(max_length=40)
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 45
+sem=models.IntegerField()
+courses=models.ManyToManyField(course,related_name='student_set')
+def __str__(self):
+return self.usn+" "+self.name+" "+str(self.sem)
+After writing models.py run the below commands in VS code terminal. 
+python manage.py makemigrations
+python manage.py migrate
+Open python interactive console in VS code terminal by giving the following command
+python manage.py shell
+In interactive python console import the model student and course as shown below
+from studCourseRegApp.models import student,course
+Create student objects as given below in the interactive python console
+>>>s1=student(usn= ‘1BI21CS001’,name= ‘Harish’, sem=6)
+>>>s2=student(usn= ‘1BI21CS002’,name= ‘Kumar’, sem=6)
+>>>s3=student(usn= ‘1BI21CS003’,name= ‘Chetan, sem=6)
+>>>s4=student(usn= ‘1BI21CS004’,name= ‘Rama’, sem=6)
+>>>s5=student(usn= ‘1BI21CS005’,name= ‘Krishna, sem=6)
+>>>s6=student(usn= ‘1BI21CS007’,name= ‘XYZ, sem=6)
+Make the list of students write a for loop and save each student object the student table as 
+show below
+studList=[s1,s2,s3,s4,s5,s6]
+for stud in studList:
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 46
+... stud.save()
+Similarly add the following courses to the course table
+>>>c1=course(courseCode='21CS61',courseName='SE',courseCredits=3)
+>>>c2=course(courseCode='21CS62',courseName='FSD',courseCredits=3)
+>>>c3=course(courseCode='21CS63',courseName='CGV',courseCredits=3)
+>>>c4=course(courseCode='21CS64',courseName='DBMS',courseCredits=3)
+>>>c5=course(courseCode='21CSL62',courseName='FSD Lab',courseCredits=2)
+>>> courseList=[c1,c2,c3,c4,c5]
+>>> for course in courseList:
+... course.save()
+Open Sqlite DB in VS code and check the student and Course Table [Every time you update 
+the table close and open the Sqlite DB to view the updated data]
 views.py
+from django.http import HttpResponse
 from django.shortcuts import render
+from studCourseRegApp.models import student,course, projectForm
 # Create your views here.
 def home(request):
 return render(request,'home.html')
-def contactus(request):
-return render(request,'contactus.html')
-def aboutus(request):
-return render(request,'about.html')
+def studentlist(request):
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 47
+s=student.objects.all()
+return render(request,'studentlist.html',{'student_list':s})
+def courselist(request):
+c=course.objects.all()
+return render(request,'courselist.html',{'course_list':c})
+def register(request):
+if request.method=="POST":
+sid=request.POST.get("student")
+cid=request.POST.get("course")
+studentobj=student.objects.get(id=sid)
+courseobj=course.objects.get(id=cid)
+res=studentobj.courses.filter(id=cid)
+if res:
+resp="<h1>Student with usn %s has already enrolled for the 
+%s<h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+studentobj.courses.add(courseobj)
+resp="<h1>student with usn %s successfully enrolled for the course with sub code 
+%s</h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+else:
+studentlist=student.objects.all()
+courselist=course.objects.all()
+return render(request,'register.html',{'student_list':studentlist,'course_list':courselist}) 
+def enrolledStudents(request):
+if request.method=="POST":
+cid=request.POST.get("course")
+courseobj=course.objects.get(id=cid)
+studentlistobj=courseobj.student_set.all()
+return render(request,'enrolledlist.html',{'course':courseobj,'student_list':studentlistobj}) 
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 48
+else:
+courselist=course.objects.all()
+return render(request,'enrolledlist.html',{'Course_List':courselist})
 urls.py
 from django.contrib import admin
 from django.urls import path
-from layoutApp.views import aboutus, contactus, home
+from studCourseRegApp.views import home, studentlist,courselist,register,enrolledStudents
 urlpatterns = [
-path('admin/', admin.site.urls),
+path('secretadmin/', admin.site.urls),
 path('',home),
-path('contactus/',contactus),
-path('aboutus/',aboutus),
 path('home/',home),
+path('studentlist/',studentlist),
+path('courselist/',courselist),
+path('register/',register),
+path('enrolledlist/',enrolledStudents),
 ]
-
-
-
-settings.py (only one change inside installed apps add layoutapp)
+settings.py(only one change inside installed apps add studCourseRegApp )
 # Application definition
 INSTALLED_APPS = [
 'django.contrib.admin',
@@ -202,6 +317,1567 @@ INSTALLED_APPS = [
 'django.contrib.sessions',
 'django.contrib.messages',
 'django.contrib.staticfiles',
-'layoutApp',
+'studCourseRegApp',
 ]
+OUTPUT
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 49
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 50
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 51
+PROGRAM 3
+3.1 . For student and course models created in Lab experiment for Module2, register admin 
+interfaces, perform migrations and illustrate data entry through admin forms.
+basicTemplate.html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ nav{background-color: lightblue;padding: 15px; }
+ nav a {
+ color: #fff; /* Text color */
+ text-decoration: none; /* Remove underline */
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 52
+ padding: 10px 20px; /* Padding around each link */
+ margin: 0px 10px; /* Spacing between links */
+ border-radius: 5px; /* Rounded corners */
+ background-color: #555;
+ flex-wrap: wrap;
+ 
+}
+nav a:hover {
+ background-color:aqua;/* Background color on hover */
+}
+ul {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ display: flex; /* Use flexbox */
+ flex-wrap: wrap; /* Allow items to wrap to the next line */
+ flex-direction: row; /* Display items in a column */
+ }
+ li {
+ margin-right: 20px;
+ margin-bottom: 25px;
+ }
+ </style>
+<title>
+{% block title %} {% endblock %}
+</title>
+</head>
+<body>
+<center> <h1 style="background-color: blue;color:yellow"> STUDENT COURSE 
+REGISTRATION PORTAL</h1></center>
+<nav>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 53
+<ul>
+<li> <a href="/home/">HOME</a></li>
+<li> <a href="/studentlist/">STUDENT LIST</a></li>
+<li> <a href="/courselist/">COURSE LIST</a> </li>
+<li> <a href="/register/">REGISTER</a></li>
+<li> <a href="/enrolledlist/">ENROLLED LIST</a></li>
+<li> <a href="/addproject/">ADD PROJECT</a></li>
+<li><a href="/genericlistviewstudent/">GENERIC STUDENT LIST VIEW</a></li>
+<li> <a href="/download_course_table_as_csv/">DOWNLOAD COURSE AS 
+CSV</a> </li>
+<li> <a href="/download_course_table_as_pdf/">DWONLOAD COURSE AS 
+PDF</a></li>
+</ul>
+</nav>
+<section>
+{% block content %} {% endblock %}
+</section>
+<footer>
+<hr/>
+<center> 
+&copy; Designed and Developeb by Dr. Harish Kumar B T, Dept. of CSE, BIT, 
+Bangalore-04
+</center>
+</footer>
+</body>
+</html>
+home.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Home Page {% endblock %}
+{% block content %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 54
+<li>Click on Student List to get the List of students</li>
+<li> Click on Course List to get the list of courses</li>
+<li>click on register to enroll student to a course</li>
+{% endblock %}
+studentlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Student List {% endblock %}
+{% block content%}
+<h1>Student List</h1>
+<table border="1">
+<tr>
+<th>
+USN
+</th>
+<th>
+NAME
+</th>
+<th>
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 55
+courselist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course List {% endblock %}
+{% block content%}
+<h1> Course List</h1>
+<table border="1">
+<tr>
+<th>
+Sub Code
+</th>
+<th>
+Sub Name
+</th>
+<th>
+Credits
+</th>
+</tr>
+{% for c in course_list %}
+<tr>
+<td>{{c.courseCode}}</td>
+<td>{{c.courseName}}</td>
+<td>{{c.courseCredits}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 56
+enrolledlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Registration Details {% endblock %}
+{% block content %}
+<form method="POST" action="">
+{% csrf_token %}
+Select Course: 
+<select name="course">
+{% for c in Course_List %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="Search"/>
+{% if student_list %}
+<h1> List of Students registered of the course {{course.courseCode}}</h1>
+<table border="1">
+<tr>
+<th>
+USN
+</th>
+<th>
+NAME
+</th>
+<th>
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 57
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+</form>
+{% endblock %}
+register.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Register Page {% endblock %}
+{% block content %}
+<h1> Student Course Registration</h1>
+<form method="POST" action="">
+{% csrf_token %}
+Select USN:
+<select name="student">
+{% for s in student_list %}
+<option value="{{s.id}}">{{s.usn}}</option>
+{% endfor %}
+</select>
+Select Course:
+<select name="course">
+{% for c in course_list %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="ENROLL"/>
+</form>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 58
+{% endblock %}
+projectreg.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Project Details Registration {% endblock %}
+{% block content %}
+<form method="POST" action="">
+{% csrf_token %}
+<table border="1">
+{{ form.as_table }}
+<tr>
+<td>
+<input type="submit" value="Add Project"/>
+</td>
+</tr>
+</table>
+</form>
+{% endblock %}
+admin.py
+from django.contrib import admin
+from studCourseRegApp.models import student,course
+# Register your models here.
+#admin.site.register(student)
+#admin.site.register(course)
+admin.site.site_header='FDP ON Django'
+admin.site.site_title='FDP ON Django'
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 59
+@admin.register(student)
+class studentAdmin(admin.ModelAdmin):
+list_display=('usn','name')
+ordering=('usn',)
+search_fields=('name',)
+@admin.register(course)
+class courseAdmin(admin.ModelAdmin):
+list_display=('courseCode','courseName')
+ordering=('courseCode',)
+search_fields=('courseName',)
+models.py
+from django.db import models
+from django.forms import ModelForm
+# Create your models here.
+class course(models.Model):
+courseCode=models.CharField(max_length=10)
+courseName=models.CharField(max_length=50)
+courseCredits=models.IntegerField()
+def __str__(self):
+return self.courseCode+" "+self.courseName+" "+str(self.courseCredits)
+class student(models.Model):
+usn=models.CharField(max_length=10)
+name=models.CharField(max_length=40)
+sem=models.IntegerField()
+courses=models.ManyToManyField(course,related_name='student_set')
+def __str__(self):
+return self.usn+" "+self.name+" "+str(self.sem)
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 60
+class projectReg(models.Model):
+student=models.ForeignKey(student,on_delete=models.CASCADE)
+ptitle=models.CharField(max_length=30)
+planguage=models.CharField(max_length=30)
+pduration=models.IntegerField()
+class projectForm(ModelForm): 
+required_css_class="required" 
+class Meta: 
+model=projectReg 
+fields=['student','ptitle','planguage','pduration'] 
+After writing models.py run the below commands in VS code terminal. 
+python manage.py makemigrations
+python manage.py migrate
+import django.db.models.deletion
+from django.db import migrations, models
+class Migration(migrations.Migration):
+dependencies = [
+('studCourseRegApp', '0001_initial'),
+]
+operations = [
+migrations.CreateModel(
+name='projectReg',
+fields=[
+('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, 
+verbose_name='ID')),
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 61
+('ptitle', models.CharField(max_length=30)),
+('planguage', models.CharField(max_length=30)),
+('pduration', models.IntegerField()),
+('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, 
+to='studCourseRegApp.student')),
+],
+),
+]
+After writing models.py run the below commands in VS code terminal. 
+python manage.py makemigrations
+python manage.py migrate
+views.py
+from django.http import HttpResponse
+from django.shortcuts import render
+from studCourseRegApp.models import student,course, projectForm
+# Create your views here.
+def home(request):
+return render(request,'home.html')
+def studentlist(request):
+s=student.objects.all()
+return render(request,'studentlist.html',{'student_list':s})
+def courselist(request):
+c=course.objects.all()
+return render(request,'courselist.html',{'course_list':c})
+def register(request):
+if request.method=="POST":
+sid=request.POST.get("student")
+cid=request.POST.get("course")
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 62
+studentobj=student.objects.get(id=sid)
+courseobj=course.objects.get(id=cid)
+res=studentobj.courses.filter(id=cid)
+if res:
+resp="<h1>Student with usn %s has already enrolled for the 
+%s<h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+studentobj.courses.add(courseobj)
+resp="<h1>student with usn %s successfully enrolled for the course with sub code 
+%s</h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+else:
+studentlist=student.objects.all()
+courselist=course.objects.all()
+return render(request,'register.html',{'student_list':studentlist,'course_list':courselist}) 
+def enrolledStudents(request):
+if request.method=="POST":
+cid=request.POST.get("course")
+courseobj=course.objects.get(id=cid)
+studentlistobj=courseobj.student_set.all()
+return render(request,'enrolledlist.html',{'course':courseobj,'student_list':studentlistobj}) 
+else:
+courselist=course.objects.all()
+return render(request,'enrolledlist.html',{'Course_List':courselist})
+def add_project(request):
+if request.method=="POST":
+form=projectForm(request.POST)
+if form.is_valid():
+form.save()
+return HttpResponse("<h1>Project Data Successfully saved</h1>")
+else:
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 63
+return HttpResponse("<h1>Project details not saved</h1>")
+else:
+form=projectForm()
+return render(request, "projectReg.html",{'form':form})
+urls.py
+from django.contrib import admin
+from django.urls import path
+from studCourseRegApp.views import enrolledStudentsUsingAjax, generateCSV, home, 
+registerAjax, studentlist,courselist,register,enrolledStudents,add_project,
+urlpatterns = [
+path('secretadmin/', admin.site.urls),
+path('',home),
+path('home/',home),
+path('studentlist/',studentlist),
+path('courselist/',courselist),
+path('register/',register),
+path('enrolledlist/',enrolledStudents),
+path('addproject/',add_project),
+]
+settings.py(only one change inside installed apps add studCourseRegApp )
+# Application definition
+INSTALLED_APPS = [
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
+'studCourseRegApp',
+]
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 64
+OUTPUT
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 65
+3.2 . Develop a Model form for student that contains his topic chosen for project, languages 
+used and duration with a model called project.
+basicTemplate.html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ nav{background-color: lightblue;padding: 15px; }
+ nav a {
+ color: #fff; /* Text color */
+ text-decoration: none; /* Remove underline */
+ padding: 10px 20px; /* Padding around each link */
+ margin: 0px 10px; /* Spacing between links */
+ border-radius: 5px; /* Rounded corners */
+ background-color: #555;
+ flex-wrap: wrap;
+ 
+}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 66
+nav a:hover {
+ background-color:aqua;/* Background color on hover */
+}
+ul {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ display: flex; /* Use flexbox */
+ flex-wrap: wrap; /* Allow items to wrap to the next line */
+ flex-direction: row; /* Display items in a column */
+ }
+ li {
+ margin-right: 20px;
+ margin-bottom: 25px;
+ }
+ </style>
+<title>
+{% block title %} {% endblock %}
+</title>
+</head>
+<body>
+<center> <h1 style="background-color: blue;color:yellow"> STUDENT COURSE 
+REGISTRATION PORTAL</h1></center>
+<nav>
+<ul>
+<li> <a href="/home/">HOME</a></li>
+<li> <a href="/studentlist/">STUDENT LIST</a></li>
+<li> <a href="/courselist/">COURSE LIST</a> </li>
+<li> <a href="/register/">REGISTER</a></li>
+<li> <a href="/enrolledlist/">ENROLLED LIST</a></li>
+<li> <a href="/addproject/">ADD PROJECT</a></li>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 67
+<li><a href="/genericlistviewstudent/">GENERIC STUDENT LIST VIEW</a></li>
+<li> <a href="/download_course_table_as_csv/">DOWNLOAD COURSE AS 
+CSV</a> </li>
+<li> <a href="/download_course_table_as_pdf/">DWONLOAD COURSE AS 
+PDF</a></li>
+</ul>
+</nav>
+<section>
+{% block content %} {% endblock %}
+</section>
+<footer>
+<hr/>
+<center> 
+&copy; Designed and Developeb by Dr. Harish Kumar B T, Dept. of CSE, BIT, 
+Bangalore-04
+</center>
+</footer>
+</body>
+</html>
+home.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Home Page {% endblock %}
+{% block content %}
+<li>Click on Student List to get the List of students</li>
+<li> Click on Course List to get the list of courses</li>
+<li>click on register to enroll student to a course</li>
+{% endblock %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 68
+studentlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Student List {% endblock %}
+{% block content%}
+<h1>Student List</h1>
+<table border="1">
+<tr>
+<th>
+USN
+</th>
+<th>
+NAME
+</th>
+<th>
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+courselist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course List {% endblock %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 69
+{% block content%}
+<h1> Course List</h1>
+<table border="1">
+<tr>
+<th>
+Sub Code
+</th>
+<th>
+Sub Name
+</th>
+<th>
+Credits
+</th>
+</tr>
+{% for c in course_list %}
+<tr>
+<td>{{c.courseCode}}</td>
+<td>{{c.courseName}}</td>
+<td>{{c.courseCredits}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+enrolledlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Registration Details {% endblock %}
+{% block content %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 70
+<form method="POST" action="">
+{% csrf_token %}
+Select Course: 
+<select name="course">
+{% for c in Course_List %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="Search"/>
+{% if student_list %}
+<h1> List of Students registered of the course {{course.courseCode}}</h1>
+<table border="1">
+<tr>
+<th>
+USN
+</th>
+<th>
+NAME
+</th>
+<th>
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 71
+</form>
+{% endblock %}
+register.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Register Page {% endblock %}
+{% block content %}
+<h1> Student Course Registration</h1>
+<form method="POST" action="">
+{% csrf_token %}
+Select USN:
+<select name="student">
+{% for s in student_list %}
+<option value="{{s.id}}">{{s.usn}}</option>
+{% endfor %}
+</select>
+Select Course:
+<select name="course">
+{% for c in course_list %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="ENROLL"/>
+</form>
+{% endblock %}
+projectreg.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Project Details Registration {% endblock %}
+{% block content %}
+<form method="POST" action="">
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 72
+{% csrf_token %}
+<table border="1">
+{{ form.as_table }}
+<tr>
+<td>
+<input type="submit" value="Add Project"/>
+</td>
+</tr>
+</table>
+</form>
+{% endblock %}
+models.py
+from django.db import models
+from django.forms import ModelForm
+# Create your models here.
+class course(models.Model):
+courseCode=models.CharField(max_length=10)
+courseName=models.CharField(max_length=50)
+courseCredits=models.IntegerField()
+def __str__(self):
+return self.courseCode+" "+self.courseName+" "+str(self.courseCredits)
+class student(models.Model):
+usn=models.CharField(max_length=10)
+name=models.CharField(max_length=40)
+sem=models.IntegerField()
+courses=models.ManyToManyField(course,related_name='student_set')
+def __str__(self):
+return self.usn+" "+self.name+" "+str(self.sem)
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 73
+class projectReg(models.Model):
+student=models.ForeignKey(student,on_delete=models.CASCADE)
+ptitle=models.CharField(max_length=30)
+planguage=models.CharField(max_length=30)
+pduration=models.IntegerField()
+class projectForm(ModelForm): 
+required_css_class="required" 
+class Meta: 
+model=projectReg 
+fields=['student','ptitle','planguage','pduration'] 
+After writing models.py run the below commands in VS code terminal. 
+python manage.py makemigrations
+python manage.py migrate
+views.py
+from django.http import HttpResponse
+from django.shortcuts import render
+from studCourseRegApp.models import student,course, projectForm
+# Create your views here.
+def home(request):
+return render(request,'home.html')
+def studentlist(request):
+s=student.objects.all()
+return render(request,'studentlist.html',{'student_list':s})
+def courselist(request):
+c=course.objects.all()
+return render(request,'courselist.html',{'course_list':c})
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 74
+def register(request):
+if request.method=="POST":
+sid=request.POST.get("student")
+cid=request.POST.get("course")
+studentobj=student.objects.get(id=sid)
+courseobj=course.objects.get(id=cid)
+res=studentobj.courses.filter(id=cid)
+if res:
+resp="<h1>Student with usn %s has already enrolled for the 
+%s<h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+studentobj.courses.add(courseobj)
+resp="<h1>student with usn %s successfully enrolled for the course with sub code 
+%s</h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+else:
+studentlist=student.objects.all()
+courselist=course.objects.all()
+return render(request,'register.html',{'student_list':studentlist,'course_list':courselist}) 
+def enrolledStudents(request):
+if request.method=="POST":
+cid=request.POST.get("course")
+courseobj=course.objects.get(id=cid)
+studentlistobj=courseobj.student_set.all()
+return render(request,'enrolledlist.html',{'course':courseobj,'student_list':studentlistobj}) 
+else:
+courselist=course.objects.all()
+return render(request,'enrolledlist.html',{'Course_List':courselist})\
 
+
+def add_project(request):
+if request.method=="POST":
+form=projectForm(request.POST)
+if form.is_valid():
+form.save()
+return HttpResponse("<h1>Project Data Successfully saved</h1>")
+else:
+return HttpResponse("<h1>Project details not saved</h1>")
+else:
+form=projectForm()
+return render(request, "projectReg.html",{'form':form})
+urls.py
+from django.contrib import admin
+from django.urls import path
+from studCourseRegApp.views import enrolledStudentsUsingAjax, generateCSV, home, 
+registerAjax, 
+studentlist,courselist,register,enrolledStudents,add_project,StudentListView,StudentDetailVie
+w,generatePDF
+urlpatterns = [
+path('secretadmin/', admin.site.urls),
+path('',home),
+path('home/',home),
+path('studentlist/',studentlist),
+path('courselist/',courselist),
+path('register/',register),
+path('enrolledlist/',enrolledStudents),
+path('addproject/',add_project),
+]
+settings.py(only one change inside installed apps add studCourseRegApp )
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 76
+# Application definition
+INSTALLED_APPS = [
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
+'studCourseRegApp',
+]
+OUTPUT
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 77
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 78
+PROGRAM 4
+4.1 . For students enrolment developed in Module 2, create a generic class view which 
+displays list of students and detail view that displays student details for any selected student 
+in the list.
+basicTemplate.html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ nav{background-color: lightblue;padding: 15px; }
+ nav a {
+ color: #fff; /* Text color */
+ text-decoration: none; /* Remove underline */
+ padding: 10px 20px; /* Padding around each link */
+ margin: 0px 10px; /* Spacing between links */
+ border-radius: 5px; /* Rounded corners */
+ background-color: #555;
+ flex-wrap: wrap;
+ 
+}
+nav a:hover {
+ background-color:aqua;/* Background color on hover */
+}
+ul {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ display: flex; /* Use flexbox */
+ flex-wrap: wrap; /* Allow items to wrap to the next line */
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 79
+ flex-direction: row; /* Display items in a column */
+ }
+ li {
+ margin-right: 20px;
+ margin-bottom: 25px;
+ }
+ </style>
+<title>
+{% block title %} {% endblock %}
+</title>
+</head>
+<body>
+<center> <h1 style="background-color: blue;color:yellow"> STUDENT COURSE 
+REGISTRATION PORTAL</h1></center>
+<nav>
+<ul>
+<li> <a href="/home/">HOME</a></li>
+<li> <a href="/studentlist/">STUDENT LIST</a></li>
+<li> <a href="/courselist/">COURSE LIST</a> </li>
+<li> <a href="/register/">REGISTER</a></li>
+<li> <a href="/enrolledlist/">ENROLLED LIST</a></li>
+<li> <a href="/addproject/">ADD PROJECT</a></li>
+<li><a href="/genericlistviewstudent/">GENERIC STUDENT LIST VIEW</a></li>
+<li> <a href="/download_course_table_as_csv/">DOWNLOAD COURSE AS 
+CSV</a> </li>
+<li> <a href="/download_course_table_as_pdf/">DWONLOAD COURSE AS 
+PDF</a></li>
+</ul>
+</nav>
+<section>
+{% block content %} {% endblock %}
+</section>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 80
+<footer>
+<hr/>
+<center> 
+&copy; Designed and Developeb by Dr. Harish Kumar B T, Dept. of CSE, BIT, 
+Bangalore-04
+</center>
+</footer>
+</body>
+</html>
+home.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Home Page {% endblock %}
+{% block content %}
+<li>Click on Student List to get the List of students</li>
+<li> Click on Course List to get the list of courses</li>
+<li>click on register to enroll student to a course</li>
+{% endblock %}
+studentlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Student List {% endblock %}
+{% block content%}
+<h1>Student List</h1>
+<table border="1">
+<tr>
+<th>
+USN
+</th>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 81
+<th>
+NAME
+</th>
+<th>
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+courselist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course List {% endblock %}
+{% block content%}
+<h1> Course List</h1>
+<table border="1">
+<tr>
+<th>
+Sub Code
+</th>
+<th>
+Sub Name
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 82
+</th>
+<th>
+Credits
+</th>
+</tr>
+{% for c in course_list %}
+<tr>
+<td>{{c.courseCode}}</td>
+<td>{{c.courseName}}</td>
+<td>{{c.courseCredits}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}
+enrolledlist.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Registration Details {% endblock %}
+{% block content %}
+<form method="POST" action="">
+{% csrf_token %}
+Select Course: 
+<select name="course">
+{% for c in Course_List %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="Search"/>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 83
+{% if student_list %}
+<h1> List of Students registered of the course {{course.courseCode}}</h1>
+<table border="1">
+<tr>
+<th>
+USN
+</th>
+<th>
+NAME
+</th>
+<th>
+SEM
+</th>
+</tr>
+{% for s in student_list %}
+<tr>
+<td>{{s.usn}}</td>
+<td>{{s.name}}</td>
+<td>{{s.sem}}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+</form>
+{% endblock %}
+register.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Course Register Page {% endblock %}
+{% block content %}
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 84
+<h1> Student Course Registration</h1>
+<form method="POST" action="">
+{% csrf_token %}
+Select USN:
+<select name="student">
+{% for s in student_list %}
+<option value="{{s.id}}">{{s.usn}}</option>
+{% endfor %}
+</select>
+Select Course:
+<select name="course">
+{% for c in course_list %}
+<option value="{{c.id}}">{{c.courseCode}}</option>
+{% endfor %}
+</select>
+<input type="submit" value="ENROLL"/>
+</form>
+{% endblock %}
+GenericListViewStudent.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Generic Student List View {% endblock %}
+{% block content %}
+{% if student_list %}
+<table border="1">
+<tr>
+<th>USN</th>
+<th>Courses Enrolled</th>
+</tr>
+{% for student in student_list %}
+<tr>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 85
+<td>
+<a href="/genericdetailedviewstudent/{{student.pk}}">{{student.usn}}</a>
+</td>
+<td>
+{% for course in student.courses.all %}
+<span>{{course.courseName}}</span>
+{% endfor %}
+</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<h1>No Students Enrolled</h1>
+{% endif %}
+{% endblock %}
+GenericDetailedViewStudent.html
+{% extends 'basicTemplate.html' %}
+{% block title %} Detailed Student View {% endblock %}
+{% block content %}
+<h1> Student Name: {{student.name}}</h1>
+<h1>Student USN: {{student.usn}}</h1>
+<h1> Student Sem: {{student.sem}}</h1>
+{% endblock %}
+models.py
+from django.db import models
+from django.forms import ModelForm
+# Create your models here.
+class course(models.Model):
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 86
+courseCode=models.CharField(max_length=10)
+courseName=models.CharField(max_length=50)
+courseCredits=models.IntegerField()
+def __str__(self):
+return self.courseCode+" "+self.courseName+" "+str(self.courseCredits)
+class student(models.Model):
+usn=models.CharField(max_length=10)
+name=models.CharField(max_length=40)
+sem=models.IntegerField()
+courses=models.ManyToManyField(course,related_name='student_set')
+def __str__(self):
+return self.usn+" "+self.name+" "+str(self.sem)
+class projectReg(models.Model):
+student=models.ForeignKey(student,on_delete=models.CASCADE)
+ptitle=models.CharField(max_length=30)
+planguage=models.CharField(max_length=30)
+pduration=models.IntegerField()
+class projectForm(ModelForm): 
+required_css_class="required" 
+class Meta: 
+model=projectReg 
+fields=['student','ptitle','planguage','pduration'] 
+After writing models.py run the below commands in VS code terminal. 
+python manage.py makemigrations
+python manage.py migrate
+views.py
+from django.http import HttpResponse
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 87
+from django.shortcuts import render
+from studCourseRegApp.models import student,course, projectForm
+# Create your views here.
+def home(request):
+return render(request,'home.html')
+def studentlist(request):
+s=student.objects.all()
+return render(request,'studentlist.html',{'student_list':s})
+def courselist(request):
+c=course.objects.all()
+return render(request,'courselist.html',{'course_list':c})
+def register(request):
+if request.method=="POST":
+sid=request.POST.get("student")
+cid=request.POST.get("course")
+studentobj=student.objects.get(id=sid)
+courseobj=course.objects.get(id=cid)
+res=studentobj.courses.filter(id=cid)
+if res:
+resp="<h1>Student with usn %s has already enrolled for the 
+%s<h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+studentobj.courses.add(courseobj)
+resp="<h1>student with usn %s successfully enrolled for the course with sub code 
+%s</h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+else:
+studentlist=student.objects.all()
+courselist=course.objects.all()
+return render(request,'register.html',{'student_list':studentlist,'course_list':courselist}) 
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 88
+def enrolledStudents(request):
+if request.method=="POST":
+cid=request.POST.get("course")
+courseobj=course.objects.get(id=cid)
+studentlistobj=courseobj.student_set.all()
+return render(request,'enrolledlist.html',{'course':courseobj,'student_list':studentlistobj}) 
+else:
+courselist=course.objects.all()
+return render(request,'enrolledlist.html',{'Course_List':courselist})
+def add_project(request):
+if request.method=="POST":
+form=projectForm(request.POST)
+if form.is_valid():
+form.save()
+return HttpResponse("<h1>Project Data Successfully saved</h1>")
+else:
+return HttpResponse("<h1>Project details not saved</h1>")
+else:
+form=projectForm()
+return render(request, "projectReg.html",{'form':form})
+from django.views import generic
+class StudentListView(generic.ListView):
+model=student
+template_name="GenericListViewStudent.html"
+class StudentDetailView(generic.DetailView):
+model=student
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 89
+template_name="GenericDetailedViewStudent.html"
+urls.py
+from django.contrib import admin
+from django.urls import path
+from studCourseRegApp.views import enrolledStudentsUsingAjax, generateCSV, home, 
+registerAjax, 
+studentlist,courselist,register,enrolledStudents,add_project,StudentListView,StudentDetailVie
+w
+urlpatterns = [
+path('secretadmin/', admin.site.urls),
+path('',home),
+path('home/',home),
+path('studentlist/',studentlist),
+path('courselist/',courselist),
+path('register/',register),
+path('enrolledlist/',enrolledStudents),
+path('addproject/',add_project),
+path('genericlistviewstudent/',StudentListView.as_view()),
+path('genericdetailedviewstudent/<int:pk>/',StudentDetailView.as_view()),
+]
+settings.py(only one change inside installed apps add studCourseRegApp )
+# Application definition
+INSTALLED_APPS = [
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 90
+'studCourseRegApp',
+]
+OUTPUT
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 91
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 92
+4.2 . Develop example Django app that performs CSV and PDF generation for any models 
+created in previous laboratory component.
+basicTemplate.html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ nav{background-color: lightblue;padding: 15px; }
+ nav a {
+ color: #fff; /* Text color */
+ text-decoration: none; /* Remove underline */
+ padding: 10px 20px; /* Padding around each link */
+ margin: 0px 10px; /* Spacing between links */
+ border-radius: 5px; /* Rounded corners */
+ background-color: #555;
+ flex-wrap: wrap;
+ 
+}
+nav a:hover {
+ background-color:aqua;/* Background color on hover */
+}
+ul {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ display: flex; /* Use flexbox */
+ flex-wrap: wrap; /* Allow items to wrap to the next line */
+ flex-direction: row; /* Display items in a column */
+ }
+ li {
+ margin-right: 20px;
+ margin-bottom: 25px;
+ }
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 93
+ </style>
+<title>
+{% block title %} {% endblock %}
+</title>
+</head>
+<body>
+<center> <h1 style="background-color: blue;color:yellow"> STUDENT COURSE 
+REGISTRATION PORTAL</h1></center>
+<nav>
+<ul>
+<li> <a href="/home/">HOME</a></li>
+<li> <a href="/studentlist/">STUDENT LIST</a></li>
+<li> <a href="/courselist/">COURSE LIST</a> </li>
+<li> <a href="/register/">REGISTER</a></li>
+<li> <a href="/enrolledlist/">ENROLLED LIST</a></li>
+<li> <a href="/addproject/">ADD PROJECT</a></li>
+<li><a href="/genericlistviewstudent/">GENERIC STUDENT LIST VIEW</a></li>
+<li> <a href="/download_course_table_as_csv/">DOWNLOAD COURSE AS 
+CSV</a> </li>
+<li> <a href="/download_course_table_as_pdf/">DWONLOAD COURSE AS 
+PDF</a></li>
+</ul>
+</nav>
+<section>
+{% block content %} {% endblock %}
+</section>
+<footer>
+<hr/>
+<center> 
+&copy; Designed and Developeb by Dr. Harish Kumar B T, Dept. of CSE, BIT, 
+Bangalore-04
+</center>
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 94
+</footer>
+</body>
+</html>
+models.py
+from django.db import models
+from django.forms import ModelForm
+# Create your models here.
+class course(models.Model):
+courseCode=models.CharField(max_length=10)
+courseName=models.CharField(max_length=50)
+courseCredits=models.IntegerField()
+def __str__(self):
+return self.courseCode+" "+self.courseName+" "+str(self.courseCredits)
+class student(models.Model):
+usn=models.CharField(max_length=10)
+name=models.CharField(max_length=40)
+sem=models.IntegerField()
+courses=models.ManyToManyField(course,related_name='student_set')
+def __str__(self):
+return self.usn+" "+self.name+" "+str(self.sem)
+class projectReg(models.Model):
+student=models.ForeignKey(student,on_delete=models.CASCADE)
+ptitle=models.CharField(max_length=30)
+planguage=models.CharField(max_length=30)
+pduration=models.IntegerField()
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 95
+class projectForm(ModelForm): 
+required_css_class="required" 
+class Meta: 
+model=projectReg 
+fields=['student','ptitle','planguage','pduration'] 
+After writing models.py run the below commands in VS code terminal. 
+python manage.py makemigrations
+python manage.py migrate
+views.py
+from django.http import HttpResponse
+from django.shortcuts import render
+from studCourseRegApp.models import student,course, projectForm
+# Create your views here.
+def home(request):
+return render(request,'home.html')
+def studentlist(request):
+s=student.objects.all()
+return render(request,'studentlist.html',{'student_list':s})
+def courselist(request):
+c=course.objects.all()
+return render(request,'courselist.html',{'course_list':c})
+def register(request):
+if request.method=="POST":
+sid=request.POST.get("student")
+cid=request.POST.get("course")
+studentobj=student.objects.get(id=sid)
+courseobj=course.objects.get(id=cid)
+res=studentobj.courses.filter(id=cid)
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 96
+if res:
+resp="<h1>Student with usn %s has already enrolled for the 
+%s<h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+studentobj.courses.add(courseobj)
+resp="<h1>student with usn %s successfully enrolled for the course with sub code 
+%s</h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+else:
+studentlist=student.objects.all()
+courselist=course.objects.all()
+return render(request,'register.html',{'student_list':studentlist,'course_list':courselist}) 
+def enrolledStudents(request):
+if request.method=="POST":
+cid=request.POST.get("course")
+courseobj=course.objects.get(id=cid)
+studentlistobj=courseobj.student_set.all()
+return render(request,'enrolledlist.html',{'course':courseobj,'student_list':studentlistobj}) 
+else:
+courselist=course.objects.all()
+return render(request,'enrolledlist.html',{'Course_List':courselist})
+def add_project(request):
+if request.method=="POST":
+form=projectForm(request.POST)
+if form.is_valid():
+form.save()
+return HttpResponse("<h1>Project Data Successfully saved</h1>")
+else:
+return HttpResponse("<h1>Project details not saved</h1>")
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 97
+else:
+form=projectForm()
+return render(request, "projectReg.html",{'form':form})
+from django.views import generic
+class StudentListView(generic.ListView):
+model=student
+template_name="GenericListViewStudent.html"
+class StudentDetailView(generic.DetailView):
+model=student
+template_name="GenericDetailedViewStudent.html"
+import csv
+def generateCSV(request):
+courses=course.objects.all()
+resp=HttpResponse(content_type="text/csv")
+resp['Content-Disposition']='attachment; filename=course_data.csv'
+writer=csv.writer(resp)
+writer.writerow(['Course Code','Course Name','Course Credits'])
+for c in courses:
+writer.writerow([c.courseCode,c.courseName,c.courseCredits])
+return resp
+from reportlab.lib.pagesizes import letter 
+from reportlab.platypus import SimpleDocTemplate, Table
+def generatePDF(request):
+courses=course.objects.all()
+resp=HttpResponse(content_type="text/pdf")
+resp['Content-Disposition']='attachment; filename=course_data.pdf'
+pdf=SimpleDocTemplate(resp,pagesize=letter)
+table_data=[['Course Code','Course Name','Course Credits']]
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 98
+for c in courses:
+table_data.append([c.courseCode,c.courseName,str(c.courseCredits)])
+table=Table(table_data)
+pdf.build([table])
+return resp
+urls.py
+from django.contrib import admin
+from django.urls import path
+from studCourseRegApp.views import enrolledStudentsUsingAjax, generateCSV, home, 
+registerAjax, 
+studentlist,courselist,register,enrolledStudents,add_project,StudentListView,StudentDetailVie
+w,generatePDF
+urlpatterns = [
+path('secretadmin/', admin.site.urls),
+path('',home),
+path('home/',home),
+path('studentlist/',studentlist),
+path('courselist/',courselist),
+path('register/',register),
+path('enrolledlist/',enrolledStudents),
+path('addproject/',add_project),
+path('genericlistviewstudent/',StudentListView.as_view()),
+path('genericdetailedviewstudent/<int:pk>/',StudentDetailView.as_view()),
+path('download_course_table_as_csv/',generateCSV),
+path('download_course_table_as_pdf/',generatePDF),
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 99
+settings.py(only one change inside installed apps add studCourseRegApp )
+# Application definition
+INSTALLED_APPS = [
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
+'studCourseRegApp',
+]
+OUTPUT
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 100
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 101
+PROGRAM 5 
+5.1 . Develop a registration page for student enrolment as done in Module 2 but without page 
+refresh using AJAX.
+basicTemplate.html
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+ nav{background-color: lightblue;padding: 15px; }
+ nav a {
+ color: #fff; /* Text color */
+ text-decoration: none; /* Remove underline */
+ padding: 10px 20px; /* Padding around each link */
+ margin: 0px 10px; /* Spacing between links */
+ border-radius: 5px; /* Rounded corners */
+ background-color: #555;
+ flex-wrap: wrap;
+ 
+}
+nav a:hover {
+ background-color:aqua;/* Background color on hover */
+}
+ul {
+ list-style: none;
+ margin: 0;
+ padding: 0;
+ display: flex; /* Use flexbox */
+ flex-wrap: wrap; /* Allow items to wrap to the next line */
+ flex-direction: row; /* Display items in a column */
+ }
+ li {
+ margin-right: 20px;
+ margin-bottom: 25px;
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 102
+ }
+ </style>
+<title>
+{% block title %} {% endblock %}
+</title>
+</head>
+<body>
+<center> <h1 style="background-color: blue;color:yellow"> STUDENT COURSE 
+REGISTRATION PORTAL</h1></center>
+<nav>
+<ul>
+<li> <a href="/home/">HOME</a></li>
+<li> <a href="/studentlist/">STUDENT LIST</a></li>
+<li> <a href="/courselist/">COURSE LIST</a> </li>
+<li> <a href="/register/">REGISTER</a></li>
+<li> <a href="/enrolledlist/">ENROLLED LIST</a></li>
+<li> <a href="/addproject/">ADD PROJECT</a></li>
+<li><a href="/genericlistviewstudent/">GENERIC STUDENT LIST VIEW</a></li>
+<li> <a href="/download_course_table_as_csv/">DOWNLOAD COURSE AS 
+CSV</a> </li>
+<li> <a href="/download_course_table_as_pdf/">DWONLOAD COURSE AS 
+PDF</a></li>
+</ul>
+</nav>
+<section>
+{% block content %} {% endblock %}
+</section>
+<footer>
+<hr/>
+<center> 
+&copy; Designed and Developeb by Dr. Harish Kumar B T, Dept. of CSE, BIT, 
+Bangalore-04
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 103
+</center>
+</footer>
+</body>
+</html>
+models.py
+from django.db import models
+from django.forms import ModelForm
+# Create your models here.
+class course(models.Model):
+courseCode=models.CharField(max_length=10)
+courseName=models.CharField(max_length=50)
+courseCredits=models.IntegerField()
+def __str__(self):
+return self.courseCode+" "+self.courseName+" "+str(self.courseCredits)
+class student(models.Model):
+usn=models.CharField(max_length=10)
+name=models.CharField(max_length=40)
+sem=models.IntegerField()
+courses=models.ManyToManyField(course,related_name='student_set')
+def __str__(self):
+return self.usn+" "+self.name+" "+str(self.sem)
+class projectReg(models.Model):
+student=models.ForeignKey(student,on_delete=models.CASCADE)
+ptitle=models.CharField(max_length=30)
+planguage=models.CharField(max_length=30)
+pduration=models.IntegerField()
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 104
+class projectForm(ModelForm): 
+required_css_class="required" 
+class Meta: 
+model=projectReg 
+fields=['student','ptitle','planguage','pduration'] 
+After writing models.py run the below commands in VS code terminal. 
+python manage.py makemigrations
+python manage.py migrate
+views.py
+from django.http import HttpResponse
+from django.shortcuts import render
+from studCourseRegApp.models import student,course, projectForm
+# Create your views here.
+def home(request):
+return render(request,'home.html')
+def studentlist(request):
+s=student.objects.all()
+return render(request,'studentlist.html',{'student_list':s})
+def courselist(request):
+c=course.objects.all()
+return render(request,'courselist.html',{'course_list':c})
+def register(request):
+if request.method=="POST":
+sid=request.POST.get("student")
+cid=request.POST.get("course")
+studentobj=student.objects.get(id=sid)
+courseobj=course.objects.get(id=cid)
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 105
+res=studentobj.courses.filter(id=cid)
+if res:
+resp="<h1>Student with usn %s has already enrolled for the 
+%s<h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+studentobj.courses.add(courseobj)
+resp="<h1>student with usn %s successfully enrolled for the course with sub code 
+%s</h1>"%(studentobj.usn,courseobj.courseCode)
+return HttpResponse(resp)
+else:
+studentlist=student.objects.all()
+courselist=course.objects.all()
+return render(request,'register.html',{'student_list':studentlist,'course_list':courselist}) 
+def enrolledStudents(request):
+if request.method=="POST":
+cid=request.POST.get("course")
+courseobj=course.objects.get(id=cid)
+studentlistobj=courseobj.student_set.all()
+return render(request,'enrolledlist.html',{'course':courseobj,'student_list':studentlistobj}) 
+else:
+courselist=course.objects.all()
+return render(request,'enrolledlist.html',{'Course_List':courselist})
+def add_project(request):
+if request.method=="POST":
+form=projectForm(request.POST)
+if form.is_valid():
+form.save()
+return HttpResponse("<h1>Project Data Successfully saved</h1>")
+else:
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 106
+return HttpResponse("<h1>Project details not saved</h1>")
+else:
+form=projectForm()
+return render(request, "projectReg.html",{'form':form})
+from django.views import generic
+class StudentListView(generic.ListView):
+model=student
+template_name="GenericListViewStudent.html"
+class StudentDetailView(generic.DetailView):
+model=student
+template_name="GenericDetailedViewStudent.html"
+import csv
+def generateCSV(request):
+courses=course.objects.all()
+resp=HttpResponse(content_type="text/csv")
+resp['Content-Disposition']='attachment; filename=course_data.csv'
+writer=csv.writer(resp)
+writer.writerow(['Course Code','Course Name','Course Credits'])
+for c in courses:
+writer.writerow([c.courseCode,c.courseName,c.courseCredits])
+return resp
+from reportlab.lib.pagesizes import letter 
+from reportlab.platypus import SimpleDocTemplate, Table
+def generatePDF(request):
+courses=course.objects.all()
+resp=HttpResponse(content_type="text/pdf")
+resp['Content-Disposition']='attachment; filename=course_data.pdf'
+pdf=SimpleDocTemplate(resp,pagesize=letter)
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 107
+table_data=[['Course Code','Course Name','Course Credits']]
+for c in courses:
+table_data.append([c.courseCode,c.courseName,str(c.courseCredits)])
+table=Table(table_data)
+pdf.build([table])
+return resp
+urls.py
+from django.contrib import admin
+from django.urls import path
+from studCourseRegApp.views import enrolledStudentsUsingAjax, generateCSV, home, 
+registerAjax, 
+studentlist,courselist,register,enrolledStudents,add_project,StudentListView,StudentDetailVie
+w,generatePDF
+urlpatterns = [
+path('secretadmin/', admin.site.urls),
+path('',home),
+path('home/',home),
+path('studentlist/',studentlist),
+path('courselist/',courselist),
+path('register/',register),
+path('enrolledlist/',enrolledStudents),
+path('addproject/',add_project),
+path('genericlistviewstudent/',StudentListView.as_view()),
+path('genericdetailedviewstudent/<int:pk>/',StudentDetailView.as_view()),
+path('download_course_table_as_csv/',generateCSV),
+path('download_course_table_as_pdf/',generatePDF),
+path('courseRegUsingAjax/',registerAjax),
+]
+21CS62 Full Stack Development Laboratory
+Dept. of Computer Science and Engineering, BIT 2023-2024 Page 108
+settings.py(only one change inside installed apps add studCourseRegApp )
+# Application definition
+INSTALLED_APPS = [
+'django.contrib.admin',
+'django.contrib.auth',
+'django.contrib.contenttypes',
+'django.contrib.sessions',
+'django.contrib.messages',
+'django.contrib.staticfiles',
+'studCourseRegApp',
+]
