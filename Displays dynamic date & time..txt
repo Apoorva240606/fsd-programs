@@ -326,6 +326,14 @@ Dept. of Computer Science and Engineering, BIT 2023-2024 Page 49
 Dept. of Computer Science and Engineering, BIT 2023-2024 Page 50
 21CS62 Full Stack Development Laboratory
 Dept. of Computer Science and Engineering, BIT 2023-2024 Page 51
+
+
+
+
+
+
+
+
 PROGRAM 3
 3.1 . For student and course models created in Lab experiment for Module2, register admin 
 interfaces, perform migrations and illustrate data entry through admin forms.
@@ -709,6 +717,14 @@ Dept. of Computer Science and Engineering, BIT 2023-2024 Page 64
 OUTPUT
 21CS62 Full Stack Development Laboratory
 Dept. of Computer Science and Engineering, BIT 2023-2024 Page 65
+
+
+
+
+
+
+
+3.222222222
 3.2 . Develop a Model form for student that contains his topic chosen for project, languages 
 used and duration with a model called project.
 basicTemplate.html
@@ -1050,6 +1066,23 @@ OUTPUT
 Dept. of Computer Science and Engineering, BIT 2023-2024 Page 77
 21CS62 Full Stack Development Laboratory
 Dept. of Computer Science and Engineering, BIT 2023-2024 Page 78
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 PROGRAM 4
 4.1 . For students enrolment developed in Module 2, create a generic class view which 
 displays list of students and detail view that displays student details for any selected student 
@@ -1419,10 +1452,20 @@ Dept. of Computer Science and Engineering, BIT 2023-2024 Page 90
 'studCourseRegApp',
 ]
 OUTPUT
-21CS62 Full Stack Development Laboratory
-Dept. of Computer Science and Engineering, BIT 2023-2024 Page 91
-21CS62 Full Stack Development Laboratory
-Dept. of Computer Science and Engineering, BIT 2023-2024 Page 92
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 4.2 . Develop example Django app that performs CSV and PDF generation for any models 
 created in previous laboratory component.
 basicTemplate.html
@@ -1649,10 +1692,25 @@ INSTALLED_APPS = [
 'studCourseRegApp',
 ]
 OUTPUT
-21CS62 Full Stack Development Laboratory
-Dept. of Computer Science and Engineering, BIT 2023-2024 Page 100
-21CS62 Full Stack Development Laboratory
-Dept. of Computer Science and Engineering, BIT 2023-2024 Page 101
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 PROGRAM 5 
 5.1 . Develop a registration page for student enrolment as done in Module 2 but without page 
 refresh using AJAX.
